@@ -1,15 +1,124 @@
 classDiagram
-    %% Replace the placeholders below with your actual classes, attributes, methods, and relationships.
-    %% Keep this file updated so it matches your final implementation.
-
-    class ClassName {
-        +type attribute
-        +method() returnType
+    class Owner {
+        -owner_id: str
+        -name: str
+        -email: str
+        -phone: str
+        -address: str
+        -pets: List[Pet]
+        +add_pet(pet: Pet) void
+        +remove_pet(pet_id: str) bool
+        +get_pets() List[Pet]
+        +get_upcoming_tasks() List[Task]
+        +update_profile(name: str, email: str, phone: str, address: str) void
     }
 
-    class AnotherClass {
-        +type attribute
-        +method() returnType
+    class Pet {
+        -pet_id: str
+        -name: str
+        -species: str
+        -breed: str
+        -age: int
+        -weight: float
+        -special_needs: str
+        -owner_id: str
+        -tasks: List[Task]
+        -medical_conditions: List[str]
+        +add_task(task: Task) void
+        +get_tasks() List[Task]
+        +get_tasks_by_type(task_type: TaskType) List[Task]
+        +get_tasks_by_date(date: datetime) List[Task]
+        +update_medical_info(condition: str) void
     }
 
-    ClassName --> AnotherClass : relationship
+    class Task {
+        -task_id: str
+        -pet_id: str
+        -task_type: TaskType
+        -description: str
+        -scheduled_time: datetime
+        -priority: Priority
+        -status: Status
+        -recurring: bool
+        -recurrence_pattern: str
+        -completed_at: datetime
+        -notes: str
+        +mark_complete() void
+        +mark_in_progress() void
+        +reschedule(new_time: datetime) void
+        +is_overdue() bool
+        +calculate_priority() Priority
+        +generate_next_occurrence() Task
+    }
+
+    class Medication {
+        -medication_name: str
+        -dosage: str
+        -frequency: str
+        -administration_method: str
+        -refill_reminder: bool
+        -last_administered: datetime
+        +check_refill_needed() bool
+        +record_administration() void
+    }
+
+    class Appointment {
+        -vet_name: str
+        -vet_phone: str
+        -clinic_address: str
+        -reason: str
+        -preparation_notes: str
+        +add_preparation_task() List[Task]
+        +get_directions() str
+    }
+
+    class Scheduler {
+        -tasks: List[Task]
+        -conflicts: List[Tuple[Task, Task]]
+        +add_task(task: Task) void
+        +remove_task(task_id: str) bool
+        +sort_tasks_by_priority() List[Task]
+        +sort_tasks_by_time() List[Task]
+        +sort_tasks_by_priority_and_time() List[Task]
+        +detect_conflicts() List[Tuple[Task, Task]]
+        +resolve_conflicts() List[Task]
+        +get_tasks_for_today() List[Task]
+        +get_tasks_for_date(date: datetime) List[Task]
+        +calculate_daily_summary() Dict
+        +suggest_optimal_schedule() List[Task]
+        +get_overdue_tasks() List[Task]
+        +clear_completed_tasks() void
+    }
+
+    class TaskType {
+        <<enumeration>>
+        FEEDING
+        WALKING
+        MEDICATION
+        APPOINTMENT
+        GROOMING
+    }
+
+    class Priority {
+        <<enumeration>>
+        HIGH
+        MEDIUM
+        LOW
+    }
+
+    class Status {
+        <<enumeration>>
+        PENDING
+        IN_PROGRESS
+        COMPLETED
+        OVERDUE
+    }
+
+    Owner "1" -- "0..*" Pet : owns
+    Pet "1" -- "0..*" Task : has
+    Task <|-- Medication : inherits
+    Task <|-- Appointment : inherits
+    Scheduler "1" -- "0..*" Task : manages
+    Task --> TaskType : uses
+    Task --> Priority : uses
+    Task --> Status : uses
